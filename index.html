@@ -1,852 +1,1077 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dhineshwaran R — Portfolio</title>
-    <!-- Google Fonts: Poppins -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <style>
-        /* --- Global Styles & Variables (New "Midnight Teal" Theme) --- */
-        :root {
-            --primary: #2dd4bf;        /* Teal */
-            --secondary: #38bdf8;      /* Sky Blue */
-            --accent: #fbbf24;         /* Amber accent */
-            --bg: #0b1220;             /* Dark slate */
-            --surface: rgba(17, 25, 40, 0.72);
-            --text: #94a3b8;
-            --heading: #f1f5f9;
-            --border: rgba(148, 163, 184, 0.12);
-            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
-            --gradient: linear-gradient(135deg, #2dd4bf 0%, #38bdf8 100%);
-            --gradient-accent: linear-gradient(135deg, #fbbf24 0%, #fb7185 100%);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dhineshwaran R // System Console</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  :root{
+    --bg: #000000;
+    --bg-2: #0a0a0a;
+    --fg: #d4d4d4;
+    --muted: #6a6a6a;
+    --accent: #ff0000;
+    --accent-2: #4a0000;
+    --border: #1a1a1a;
+    --card: #050505;
+  }
+  *{ -webkit-font-smoothing: antialiased; }
+  html{ scroll-behavior: smooth; }
+  body{
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'JetBrains Mono', monospace;
+    overflow-x: hidden;
+  }
+  .font-display{ font-family: 'Rajdhani', sans-serif; letter-spacing: 0.02em;}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+  /* CRT Scanlines Effect */
+  .crt::before {
+    content: "";
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(rgba(0, 0, 0, 0.15) 50%, transparent 50%);
+    background-size: 100% 4px;
+    opacity: 0.4;
+  }
 
-        html { scroll-behavior: smooth; }
+  /* Reading Progress Bar */
+  #progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 3px;
+    background: var(--accent);
+    width: 0%;
+    z-index: 100;
+    transition: width 0.1s;
+    box-shadow: 0 0 10px var(--accent);
+  }
 
-        body {
-            font-family: 'Poppins', sans-serif;
-            color: var(--text);
-            line-height: 1.7;
-            background-color: var(--bg);
-            overflow-x: hidden;
-        }
+  /* Reveal */
+  .reveal{ opacity:0; transform: translateY(20px); transition: opacity 0.8s cubic-bezier(.16,1,.3,1), transform 0.8s cubic-bezier(.16,1,.3,1);}
+  .reveal.in{ opacity:1; transform: translateY(0);}
 
-        /* --- Dynamic Canvas Background --- */
-        #particles-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: -1;
-            background: linear-gradient(-45deg, #0b1220, #0f172a, #101c30, #0c1a2b);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-        }
+  /* Terminal Box */
+  .term-box {
+    border: 1px solid var(--accent-2);
+    background: rgba(255, 0, 0, 0.02);
+    position: relative;
+  }
+  .term-box::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 10px; height: 10px;
+    border-top: 2px solid var(--accent);
+    border-left: 2px solid var(--accent);
+  }
+  .term-box::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 10px; height: 10px;
+    border-bottom: 2px solid var(--accent);
+    border-right: 2px solid var(--accent);
+  }
 
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+  /* Tags */
+  .tag{
+    border:1px solid var(--border);
+    padding: 4px 10px;
+    font-size: 11px;
+    transition: all .3s ease;
+    color: var(--fg);
+    background: #000;
+  }
+  .tag:hover{ border-color: var(--accent); color: var(--accent); background: rgba(255,0,0,0.1);}
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            position: relative;
-        }
+  /* Cursor */
+  .cursor-dot{
+    position: fixed; width: 4px; height:20px; background: var(--accent); 
+    pointer-events:none; z-index:9999; mix-blend-mode: difference;
+    transition: transform .15s ease; transform: translate(-50%, -50%);
+  }
+  .cursor-ring{
+    position: fixed; width: 30px; height:30px; border:1px solid rgba(255,0,0,0.5); 
+    pointer-events:none; z-index:9999; transition: transform .25s ease, width .25s ease, height .25s ease;
+    transform: translate(-50%, -50%);
+  }
 
-        h1, h2, h3 {
-            color: var(--heading);
-            line-height: 1.2;
-            margin-bottom: 1rem;
-        }
+  /* Section heading */
+  .section-h{
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 700;
+    line-height: 0.95;
+  }
 
-        h2 {
-            font-size: 2.2rem;
-            text-align: center;
-            margin-bottom: 3rem;
-            position: relative;
-            padding-bottom: 0.6rem;
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
+  /* Scrollbar */
+  ::-webkit-scrollbar{ width: 6px;}
+  ::-webkit-scrollbar-track{ background: #000;}
+  ::-webkit-scrollbar-thumb{ background: #2a2a2a; border-radius:0;}
+  ::-webkit-scrollbar-thumb:hover{ background: var(--accent);}
 
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0; left: 50%;
-            transform: translateX(-50%);
-            width: 70px; height: 3px;
-            background: var(--gradient);
-            border-radius: 2px;
-        }
+  /* Selection */
+  ::selection{ background: var(--accent); color:#000;}
 
-        a { color: var(--primary); text-decoration: none; transition: all 0.3s ease; }
-        a:hover { color: var(--accent); }
+  /* Mobile nav */
+  .mobile-menu{
+    transform: translateY(-100%);
+    transition: transform .5s cubic-bezier(.16,1,.3,1);
+  }
+  .mobile-menu.open{ transform: translateY(0);}
 
-        ul { list-style: none; }
-        section { padding: 5rem 0; }
+  /* Lightbox */
+  .lightbox-overlay{
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(4px);
+    z-index: 10000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    opacity: 0; visibility: hidden;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+  }
+  .lightbox-overlay.active{ opacity: 1; visibility: visible; }
+  .lightbox-content{
+    position: relative; max-width: 900px; max-height: 90vh;
+    transform: scale(0.95);
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1);
+    border: 1px solid var(--accent);
+    background: #000;
+    box-shadow: 0 0 40px rgba(255,0,0,0.2);
+  }
+  .lightbox-overlay.active .lightbox-content{ transform: scale(1); }
+  .lightbox-content img{
+    width: 100%; height: auto; max-height: 85vh; object-fit: contain;
+  }
+  .lightbox-close{
+    position: absolute; top: 0px; right: -40px;
+    width: 32px; height: 32px; 
+    background: #000; color: var(--accent);
+    border: 1px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 14px;
+    transition: all 0.3s;
+  }
+  .lightbox-close:hover{
+    background: var(--accent); color: #000;
+  }
+  .lightbox-caption{
+    position: absolute; bottom: -30px; left: 0; right: 0;
+    text-align: center; font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--muted);
+  }
+  
+  .lightbox-code-wrapper {
+    display: none; background: #000; 
+    width: 100%; max-height: 85vh; overflow: hidden;
+  }
+  .code-window-head {
+    background: #0a0a0a; padding: 8px 16px;
+    display: flex; align-items: center; border-bottom: 1px solid var(--accent-2);
+  }
+  .code-block {
+    padding: 20px; overflow-y: auto; max-height: 75vh;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    line-height: 1.6; color: #d4d4d4; text-align: left; white-space: pre;
+  }
+  .syn-kw { color: #ff0000; font-weight: bold; }
+  .syn-type { color: #ff4d4d; }
+  .syn-com { color: #6a6a6a; }
+  .syn-fn { color: #ffffff; }
 
-        /* --- Navbar --- */
-        .navbar {
-            position: fixed;
-            top: 0; left: 0; right: 0;
-            z-index: 100;
-            background: rgba(11, 18, 32, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .nav-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 0.9rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .nav-logo { font-weight: 700; font-size: 1.25rem; color: var(--heading); }
-        .nav-logo span { color: var(--primary); }
-
-        .nav-menu { display: flex; gap: 1.6rem; flex-wrap: wrap; }
-        .nav-menu a {
-            color: var(--text);
-            font-size: 0.9rem;
-            font-weight: 500;
-        }
-        .nav-menu a:hover { color: var(--primary); }
-
-        /* --- Hero Section --- */
-        .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 7rem 0 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: radial-gradient(circle at 50% 40%, rgba(45, 212, 191, 0.12) 0%, transparent 65%);
-            z-index: -1;
-        }
-
-        .hero-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .profile-img {
-            width: 190px;
-            height: 190px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid transparent;
-            background: var(--gradient);
-            padding: 4px;
-            box-shadow: 0 5px 25px rgba(45, 212, 191, 0.25);
-            margin-bottom: 1.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .profile-img:hover { transform: scale(1.05); }
-
-        .hero-contact-info { margin-bottom: 1.5rem; }
-        .hero-contact-info p { margin: 0.25rem 0; color: #94a3b8; font-size: 0.95rem; }
-        .hero-contact-info a { color: #94a3b8; }
-        .hero-contact-info a:hover { color: var(--primary); }
-
-        .hero-content h1 {
-            font-size: 3.2rem;
-            font-weight: 700;
-            margin-bottom: 0.4rem;
-        }
-
-        .hero-content h1 span {
-            background: var(--gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-content .hero-title {
-            font-size: 1.4rem;
-            font-weight: 400;
-            color: var(--heading);
-            margin-bottom: 0.3rem;
-        }
-
-        .hero-content .hero-sub {
-            font-size: 1rem;
-            font-weight: 300;
-            color: var(--text);
-            margin-bottom: 2rem;
-        }
-
-        .cta-buttons a {
-            display: inline-block;
-            margin: 0.5rem;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary {
-            background: var(--gradient);
-            color: #062026 !important;
-            border: 2px solid transparent;
-            box-shadow: 0 4px 18px rgba(45, 212, 191, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 24px rgba(45, 212, 191, 0.45);
-        }
-
-        .btn-outline {
-            border: 2px solid var(--primary);
-            color: var(--primary) !important;
-        }
-
-        .btn-outline:hover {
-            background: rgba(45, 212, 191, 0.1);
-            transform: translateY(-3px);
-        }
-
-        /* --- Profiles Section --- */
-        .profiles-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .profile-item {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 1rem 1.5rem;
-            border-radius: 12px;
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .profile-item:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 8px 25px rgba(45, 212, 191, 0.15);
-        }
-
-        .profile-item a {
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-
-        .profile-item i {
-            font-size: 1.6rem;
-            margin-right: 1rem;
-            color: var(--primary);
-            width: 30px;
-        }
-
-        .profile-item span { font-weight: 600; color: var(--heading); }
-
-        /* --- Skills Section (Chips) --- */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .skill-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 1.5rem;
-            border-radius: 14px;
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .skill-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--primary);
-            box-shadow: 0 8px 28px rgba(45, 212, 191, 0.18);
-        }
-
-        .skill-card h3 {
-            color: var(--heading);
-            font-size: 1.05rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-        }
-
-        .skill-card h3 i { color: var(--primary); margin-right: 0.6rem; }
-
-        .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-
-        .chip {
-            background: rgba(45, 212, 191, 0.08);
-            border: 1px solid rgba(45, 212, 191, 0.25);
-            color: #5eead4;
-            padding: 0.28rem 0.9rem;
-            border-radius: 50px;
-            font-size: 0.82rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .chip:hover {
-            background: rgba(45, 212, 191, 0.18);
-            transform: translateY(-2px);
-        }
-
-        /* --- Cards (Projects / Experience / Certifications) --- */
-        .card-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            backdrop-filter: blur(10px);
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 3px;
-            background: var(--gradient);
-        }
-
-        .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 12px 30px rgba(45, 212, 191, 0.15);
-        }
-
-        .card:hover::before { background: var(--gradient-accent); }
-
-        .card-content { padding: 1.7rem; flex-grow: 1; }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.5rem;
-        }
-
-        .card-header i { color: var(--primary); font-size: 1.3rem; }
-
-        .card-content h3 {
-            color: var(--heading);
-            font-size: 1.15rem;
-            margin-bottom: 0.4rem;
-        }
-
-        .card-content .meta {
-            color: var(--primary);
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-bottom: 0.8rem;
-        }
-
-        .card-content p { margin-bottom: 1rem; font-size: 0.95rem; }
-
-        .card-content ul { padding-left: 0; margin-bottom: 0; }
-
-        .card-content ul li {
-            list-style-type: '✓ ';
-            padding-left: 0.5rem;
-            margin-bottom: 0.4rem;
-            font-size: 0.93rem;
-        }
-
-        .tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: auto; }
-
-        .tags span {
-            background: rgba(56, 189, 248, 0.08);
-            border: 1px solid rgba(56, 189, 248, 0.25);
-            color: #7dd3fc;
-            padding: 0.2rem 0.75rem;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        /* --- Footer --- */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 2.5rem 0;
-            text-align: center;
-        }
-
-        footer p { margin: 0.3rem 0; font-size: 0.9rem; }
-        footer a { color: var(--primary); }
-
-        /* --- Responsive --- */
-        @media (max-width: 768px) {
-            h1 { font-size: 2.3rem; }
-            h2 { font-size: 1.8rem; }
-            .hero-content .hero-title { font-size: 1.15rem; }
-            .profile-img { width: 150px; height: 150px; }
-            .nav-menu { justify-content: center; gap: 1.1rem; }
-        }
-    </style>
+  .cert-card, .project-card, .exp-log, .achievement-has-image { cursor: pointer; }
+  
+  /* Glitch Hover for Projects */
+  .project-card:hover .proj-title {
+    text-shadow: 1px 0 var(--accent);
+  }
+</style>
 </head>
-<body>
+<body class="crt">
 
-    <!-- ===== DYNAMIC CANVAS BACKGROUND ===== -->
-    <canvas id="particles-canvas"></canvas>
+<div id="progress-bar"></div>
+<div class="cursor-dot" id="cursorDot"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
-    <!-- ===== NAVBAR ===== -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#home" class="nav-logo">Dhineshwaran<span>.</span></a>
-            <ul class="nav-menu">
-                <li><a href="#about">About</a></li>
-                <li><a href="#skills">Skills</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#experience">Journey</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+<!-- Hidden Code Block for Project 1 -->
+<script type="text/plain" id="project1-code">
+// Student.java
+public class Student {
+    private int id;
+    private String name;
+    private String course;
+
+    public Student(int id, String name, String course) {
+        this.id = id;
+        this.name = name;
+        this.course = course;
+    }
+
+    public int getId() { return id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getCourse() { return course; }
+    public void setCourse(String course) { this.course = course; }
+
+    @Override
+    public String toString() {
+        return "ID: " + id + " | Name: " + name + " | Course: " + course;
+    }
+}
+
+// StudentManager.java
+import java.util.ArrayList;
+
+public class StudentManager {
+    private ArrayList<Student> students = new ArrayList<>();
+
+    public void addStudent(Student s) {
+        students.add(s);
+    }
+
+    public void viewStudents() {
+        if (students.isEmpty()) {
+            System.out.println("No records found.");
+            return;
+        }
+        for (Student s : students) {
+            System.out.println(s);
+        }
+    }
+
+    public Student searchStudent(int id) {
+        for (Student s : students) {
+            if (s.getId() == id) return s;
+        }
+        return null;
+    }
+
+    public void updateStudent(int id, String name, String course) {
+        Student s = searchStudent(id);
+        if (s != null) {
+            s.setName(name);
+            s.setCourse(course);
+            System.out.println("Record updated successfully.");
+        } else {
+            System.out.println("Student not found.");
+        }
+    }
+
+    public void deleteStudent(int id) {
+        Student s = searchStudent(id);
+        if (s != null) {
+            students.remove(s);
+            System.out.println("Record deleted successfully.");
+        } else {
+            System.out.println("Student not found.");
+        }
+    }
+}
+
+// Main.java
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        StudentManager manager = new StudentManager();
+        Scanner sc = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\n--- Student Management System ---");
+            System.out.println("1. Add Student");
+            System.out.println("2. View All Students");
+            System.out.println("3. Search Student");
+            System.out.println("4. Update Student");
+            System.out.println("5. Delete Student");
+            System.out.println("6. Exit");
+            System.out.print("Enter choice: ");
+            
+            int choice = sc.nextInt();
+            
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter ID: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    String name = sc.nextLine();
+                    System.out.print("Enter Course: ");
+                    String course = sc.nextLine();
+                    manager.addStudent(new Student(id, name, course));
+                    break;
+                case 2:
+                    manager.viewStudents();
+                    break;
+                case 3:
+                    System.out.print("Enter ID to search: ");
+                    Student found = manager.searchStudent(sc.nextInt());
+                    if (found != null) System.out.println(found);
+                    else System.out.println("Student not found.");
+                    break;
+                case 4:
+                    System.out.print("Enter ID to update: ");
+                    int uid = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter new Name: ");
+                    String uname = sc.nextLine();
+                    System.out.print("Enter new Course: ");
+                    String ucourse = sc.nextLine();
+                    manager.updateStudent(uid, uname, ucourse);
+                    break;
+                case 5:
+                    System.out.print("Enter ID to delete: ");
+                    manager.deleteStudent(sc.nextInt());
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice.");
+            }
+        }
+    }
+}
+</script>
+
+<!-- Lightbox Structure -->
+<div class="lightbox-overlay" id="lightbox">
+  <div class="lightbox-content">
+    <div class="lightbox-close" id="lightboxClose"><i class="fas fa-times"></i></div>
+    <img src="" alt="Certificate" id="lightboxImg" style="display: none;">
+    <div id="lightboxCodeWrapper" class="lightbox-code-wrapper">
+      <div class="code-window-head">
+        <div class="flex gap-2 items-center">
+          <span class="text-[var(--accent)] text-xs">[FILE]</span>
+          <span class="font-mono text-xs text-gray-400 ml-2">StudentManagementSystem.java</span>
         </div>
-    </nav>
+        <a href="https://github.com/dhineshwaran-23" target="_blank" class="ml-auto font-mono text-xs text-[var(--accent)] flex items-center gap-1 hover:underline">
+          <i class="fab fa-github"></i> View Repository
+        </a>
+      </div>
+      <pre class="code-block"><code id="lightboxCode"></code></pre>
+    </div>
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+</div>
 
-    <!-- ===== HERO SECTION ===== -->
-    <header class="hero" id="home">
-        <div class="container hero-content">
-            <img src="https://z-cdn-media.chatglm.cn/files/b7a93ad4-194c-4d4a-9346-39802fa0dcd3_pasted_image_1764330555489.png?auth_key=1864330564-1089a0fbf10f4bdc9f111bd5aebe942c-0-cde6afc14d009c49f1b1d668ce774a9a" alt="Dhineswaran R" class="profile-img">
+<!-- Nav -->
+<nav class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-4 flex items-center justify-between backdrop-blur-md bg-black/80 border-b border-[var(--border)]">
+  <a href="#home" class="flex items-center gap-2 group">
+    <span class="text-[var(--accent)] font-display font-bold text-lg">[</span>
+    <span class="font-display font-semibold text-lg text-white">dhineshwaran_r</span>
+    <span class="text-[var(--accent)] font-display font-bold text-lg">]</span>
+  </a>
+  <div class="hidden md:flex items-center gap-6 font-mono text-[11px] uppercase tracking-widest text-[var(--muted)]">
+    <a href="#about" class="hover:text-[var(--accent)] transition">whoami</a>
+    <a href="#experience" class="hover:text-[var(--accent)] transition">exp</a>
+    <a href="#projects" class="hover:text-[var(--accent)] transition">projects</a>
+    <a href="#skills" class="hover:text-[var(--accent)] transition">skills</a>
+    <a href="#contact" class="hover:text-[var(--accent)] transition">contact</a>
+  </div>
+  <a href="#contact" class="hidden md:inline-flex px-4 py-2 border border-[var(--accent)] text-[var(--accent)] text-[11px] font-mono uppercase tracking-widest hover:bg-[var(--accent)] hover:text-black transition">
+    Establish Connection
+  </a>
+  <button class="md:hidden text-white text-xl" id="menuBtn"><i class="fas fa-bars"></i></button>
+</nav>
 
-            <div class="hero-contact-info">
-                <p><i class="fas fa-envelope"></i> <a href="mailto:dhineshwaran2311@gmail.com">dhineshwaran2311@gmail.com</a></p>
-                <p><i class="fas fa-phone"></i> <a href="tel:+918122380849">+91 8122380849</a></p>
-            </div>
+<div class="mobile-menu fixed top-0 left-0 right-0 z-40 bg-black pt-24 pb-8 px-6 md:hidden" id="mobileMenu">
+  <div class="flex flex-col gap-6 font-display text-3xl">
+    <a href="#about" class="mobile-link">whoami</a>
+    <a href="#experience" class="mobile-link">exp</a>
+    <a href="#projects" class="mobile-link">projects</a>
+    <a href="#skills" class="mobile-link">skills</a>
+    <a href="#contact" class="mobile-link">contact</a>
+  </div>
+</div>
 
-            <h1>Hi, I'm <span>Dhineswaran R</span></h1>
-            <p class="hero-title">Aspiring Software Engineer</p>
-            <p class="hero-sub">B.E. CSE (Cyber Security) · PSNA College of Engineering and Technology</p>
+<!-- Hero: System Authentication -->
+<section id="home" class="relative min-h-screen flex items-center px-6 md:px-12 pt-24 overflow-hidden">
+  <div class="relative z-10 max-w-[1400px] mx-auto w-full grid md:grid-cols-12 gap-8 items-center">
+    <div class="md:col-span-8 reveal">
+      <div class="font-mono text-[11px] text-[var(--muted)] mb-4">
+        <span class="text-[var(--accent)]">$</span> init secure_session --user="Dhineshwaran R" --status="active"
+      </div>
+      
+      <h1 class="font-display font-bold text-[clamp(2.5rem,7vw,6rem)] leading-[0.9] mb-6">
+        SOFTWARE<br>
+        ENGINEER <span class="text-[var(--accent)]">&</span><br>
+        SECURITY <span class="text-[var(--accent)]">_</span>ENTHUSIAST
+      </h1>
 
-            <div class="cta-buttons">
-                <a href="https://drive.google.com/file/d/1k19aIINj6kpGP1UrFhhBZOBrIUl20BTq/view?usp=drivesdk" class="btn-outline" target="_blank"><i class="fas fa-eye"></i> View Resume</a>
-                <a href="https://drive.google.com/uc?export=download&id=1k19aIINj6kpGP1UrFhhBZOBrIUl20BTq" class="btn-primary" target="_blank"><i class="fas fa-download"></i> Download Resume</a>
-            </div>
+      <p class="text-[var(--muted)] text-base leading-relaxed max-w-xl mb-8 border-l-2 border-[var(--accent-2)] pl-4">
+        <span class="text-white">> </span>Aspiring Software Engineer based in Dindigul, IN. I specialize in blending MERN stack development with a security-first mindset, translating complex requirements into clean, efficient code. Currently maintaining a CGPA of 8.1.
+      </p>
+
+      <div class="flex gap-4">
+        <a href="#projects" class="inline-flex items-center gap-3 px-6 py-3 bg-[var(--accent)] text-black text-xs font-mono uppercase tracking-widest hover:bg-white transition">
+          View Directories <i class="fas fa-folder-open text-[10px]"></i>
+        </a>
+        <a href="#contact" class="border border-[var(--accent)] text-[var(--accent)] px-6 py-3 text-xs font-mono uppercase tracking-widest hover:bg-[var(--accent)] hover:text-black transition">
+          ./contact_me.sh
+        </a>
+      </div>
+    </div>
+
+    <div class="md:col-span-4 reveal">
+      <div class="term-box p-6">
+        <div class="font-mono text-xs text-[var(--muted)] uppercase mb-4 flex justify-between">
+          <span>// system_status</span>
+          <span class="text-[var(--accent)]">[ONLINE]</span>
         </div>
-    </header>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span class="text-[var(--muted)]">LOCATION</span>
+            <span class="text-white">Dindigul, IN</span>
+          </div>
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span class="text-[var(--muted)]">DEGREE</span>
+            <span class="text-white">B.E. CSE (Cyber Sec)</span>
+          </div>
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span class="text-[var(--muted)]">CGPA</span>
+            <span class="text-[var(--accent)]">8.1</span>
+          </div>
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span class="text-[var(--muted)]">GRADUATING</span>
+            <span class="text-white">2027</span>
+          </div>
+          <div class="flex justify-between border-b border-[var(--border)] pb-2">
+            <span class="text-[var(--muted)]">FOCUS</span>
+            <span class="text-white">Full-Stack / Forensics</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-[var(--muted)]">STATUS</span>
+            <span class="text-[var(--accent)]">Open to Work</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-    <main>
-        <!-- ===== ABOUT SECTION ===== -->
-        <section id="about" class="container">
-            <h2>About Me</h2>
-            <p style="text-align: center; max-width: 820px; margin: 0 auto;">
-                Computer Science student focused on software development, with hands-on experience in full-stack application
-                development using the <strong style="color: var(--primary);">MERN stack</strong>, <strong style="color: var(--primary);">Java</strong>, and
-                <strong style="color: var(--primary);">RESTful APIs</strong>, backed by a solid foundation in Object-Oriented Programming,
-                Data Structures, and SQL. With a cybersecurity background and an understanding of secure software development
-                practices, I enjoy working across the stack — from database design to responsive front-end interfaces — and
-                translating requirements into clean, efficient code.
+<!-- About: Identity Analysis -->
+<section id="about" class="relative px-6 md:px-12 py-24 md:py-32 border-t border-[var(--border)]">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-[var(--accent)]">01 // IDENTITY_ANALYSIS</span>
+      <div class="h-px flex-1 bg-[var(--border)]"></div>
+    </div>
+
+    <div class="grid md:grid-cols-12 gap-12">
+      <div class="md:col-span-7 reveal">
+        <h2 class="section-h font-display mb-8">
+          <span class="text-[var(--accent)]">root</span>@dhinesh:~/<span class="text-white">whoami</span>
+        </h2>
+        <div class="space-y-5 text-[var(--muted)] text-base leading-relaxed max-w-2xl font-mono">
+          <p>
+            <span class="text-[var(--accent)]">$</span> cat profile_summary.txt<br>
+            I'm a Computer Science student specializing in <span class="text-white">Cyber Security</span> at PSNA College of Engineering and Technology. My journey lives at the intersection of building software and breaking it — a dual perspective that makes me a more thoughtful engineer.
+          </p>
+          <p>
+            <span class="text-[var(--accent)]">$</span> list --skills --core<br>
+            With hands-on experience in <span class="text-white">Java, OOP, Data Structures, and SQL</span>, plus a working command of the <span class="text-white">MERN stack</span>, I'm comfortable moving from database design to responsive front-end interfaces. My security work — from CTF podiums to Bugcrowd's Hall of Fame — informs every line I write.
+          </p>
+          <p>
+            <span class="text-[var(--accent)]">$</span> execute --mission<br>
+            I'm eager to contribute to real-world engineering teams where I can ship features, harden systems, and grow as a well-rounded developer.
+          </p>
+        </div>
+      </div>
+
+      <div class="md:col-span-5 reveal">
+        <div class="term-box p-5">
+          <div class="font-mono text-xs text-[var(--muted)] uppercase mb-4 flex justify-between border-b border-[var(--border)] pb-2">
+            <span>// directory_tree</span>
+            <span class="text-[var(--accent)]">[DIR]</span>
+          </div>
+          <pre class="font-mono text-xs text-[var(--muted)] leading-relaxed">
+├── <span class="text-white">education/</span>
+│   ├── <span class="text-[var(--accent)]">PSNACET</span> (B.E. CSE)
+│   └── <span class="text-[var(--accent)]">SBOA</span> (HSC)
+├── <span class="text-white">experience/</span>
+│   ├── <span class="text-[var(--accent)]">Prompt_Infotech</span> (Sec)
+│   └── <span class="text-[var(--accent)]">Vivekasoftek</span> (MERN)
+├── <span class="text-white">projects/</span>
+│   ├── <span class="text-[var(--accent)]">Student_Mgmt.java</span>
+│   └── <span class="text-[var(--accent)]">Onion_IoT.sys</span>
+└── <span class="text-white">certifications/</span>
+    ├── <span class="text-[var(--accent)]">Cisco.cert</span>
+    ├── <span class="text-[var(--accent)]">Zoho.cert</span>
+    └── <span class="text-[var(--accent)]">LinkedIn.cert</span>
+          </pre>
+        </div>
+
+        <div class="grid grid-cols-3 gap-3 mt-4">
+          <div class="term-box p-4">
+            <div class="font-display text-2xl font-bold text-[var(--accent)]">2+</div>
+            <div class="font-mono text-[9px] text-[var(--muted)] uppercase mt-1">Internships</div>
+          </div>
+          <div class="term-box p-4">
+            <div class="font-display text-2xl font-bold text-[var(--accent)]">2nd</div>
+            <div class="font-mono text-[9px] text-[var(--muted)] uppercase mt-1">CTF Position</div>
+          </div>
+          <div class="term-box p-4">
+            <div class="font-display text-2xl font-bold text-[var(--accent)]">HOF</div>
+            <div class="font-mono text-[9px] text-[var(--muted)] uppercase mt-1">Bugcrowd</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Experience: Execution Log -->
+<section id="experience" class="relative px-6 md:px-12 py-24 md:py-32 border-t border-[var(--border)]">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-[var(--accent)]">02 // EXECUTION_LOG</span>
+      <div class="h-px flex-1 bg-[var(--border)]"></div>
+    </div>
+
+    <h2 class="section-h font-display mb-16 reveal">
+      <span class="text-white">/var/log/</span><span class="text-[var(--accent)]">experience</span>
+    </h2>
+
+    <div class="space-y-4">
+      <!-- Exp 1 -->
+      <div class="term-box p-6 reveal">
+        <div class="flex flex-col md:flex-row gap-6">
+          <div class="md:w-1/4 border-b md:border-b-0 md:border-r border-[var(--border)] pb-4 md:pb-0 md:pr-4">
+            <div class="font-mono text-xs text-[var(--accent)] uppercase tracking-widest mb-2">[ 2024 ]</div>
+            <div class="font-mono text-xs text-[var(--muted)]">DURATION: 5_DAYS</div>
+          </div>
+          <div class="md:w-3/4">
+            <div class="flex items-center gap-3 mb-2">
+              <i class="fas fa-shield-halved text-[var(--accent)]"></i>
+              <h3 class="font-display text-xl font-bold text-white">Cybersecurity Intern</h3>
+            </div>
+            <div class="text-[var(--muted)] font-mono text-sm mb-4">@ Prompt Infotech</div>
+            <p class="text-[var(--muted)] leading-relaxed mb-4 text-sm">
+              Completed a certified cybersecurity internship with hands-on experience in <span class="text-white">Network Security, Enumeration, Scanning, and Vulnerability Assessment</span>, following industry security assessment best practices.
             </p>
-        </section>
-
-        <!-- ===== PROFILES SECTION ===== -->
-        <section id="profiles">
-            <div class="container">
-                <h2>Find Me Online</h2>
-                <div class="profiles-grid">
-                    <div class="profile-item">
-                        <a href="https://leetcode.com/u/OeNlRAYgH5/" target="_blank">
-                            <i class="fas fa-code"></i>
-                            <span>LeetCode</span>
-                        </a>
-                    </div>
-                    <div class="profile-item">
-                        <a href="https://www.hackerrank.com/profile/dhineshwaran2311" target="_blank">
-                            <i class="fab fa-hackerrank"></i>
-                            <span>HackerRank</span>
-                        </a>
-                    </div>
-                    <div class="profile-item">
-                        <a href="https://tryhackme.com/p/dhineshwaran2311" target="_blank">
-                            <i class="fas fa-shield-halved"></i>
-                            <span>TryHackMe</span>
-                        </a>
-                    </div>
-                    <div class="profile-item">
-                        <a href="https://play.picoctf.org/users/dhineshwaran_23" target="_blank">
-                            <i class="fas fa-flag"></i>
-                            <span>picoCTF</span>
-                        </a>
-                    </div>
-                    <div class="profile-item">
-                        <a href="https://github.com/dhineshwaran-23" target="_blank">
-                            <i class="fab fa-github"></i>
-                            <span>GitHub</span>
-                        </a>
-                    </div>
-                    <div class="profile-item">
-                        <a href="https://www.linkedin.com/in/dhineshwaran-r-7620962ba" target="_blank">
-                            <i class="fab fa-linkedin"></i>
-                            <span>LinkedIn</span>
-                        </a>
-                    </div>
-                </div>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag font-mono">Network_Sec</span>
+              <span class="tag font-mono">Vuln_Assess</span>
+              <span class="tag font-mono">Enumeration</span>
             </div>
-        </section>
-
-        <!-- ===== SKILLS SECTION ===== -->
-        <section id="skills">
-            <div class="container">
-                <h2>Skills & Tech Stack</h2>
-                <div class="skills-grid">
-                    <div class="skill-card">
-                        <h3><i class="fas fa-code"></i> Programming Languages</h3>
-                        <div class="chips">
-                            <span class="chip">Java</span>
-                            <span class="chip">SQL</span>
-                        </div>
-                    </div>
-                    <div class="skill-card">
-                        <h3><i class="fas fa-laptop-code"></i> Web Development</h3>
-                        <div class="chips">
-                            <span class="chip">MongoDB</span>
-                            <span class="chip">Express.js</span>
-                            <span class="chip">React.js</span>
-                            <span class="chip">Node.js</span>
-                            <span class="chip">REST APIs</span>
-                        </div>
-                    </div>
-                    <div class="skill-card">
-                        <h3><i class="fas fa-shield-halved"></i> Cybersecurity</h3>
-                        <div class="chips">
-                            <span class="chip">Digital Forensics</span>
-                            <span class="chip">Penetration Testing</span>
-                            <span class="chip">Vulnerability Assessment</span>
-                            <span class="chip">Incident Response</span>
-                        </div>
-                    </div>
-                    <div class="skill-card">
-                        <h3><i class="fas fa-screwdriver-wrench"></i> Security & Forensics Tools</h3>
-                        <div class="chips">
-                            <span class="chip">Splunk</span>
-                            <span class="chip">FTK Imager</span>
-                            <span class="chip">Autopsy</span>
-                            <span class="chip">Burp Suite</span>
-                            <span class="chip">Metasploit</span>
-                            <span class="chip">Nessus</span>
-                            <span class="chip">Wireshark</span>
-                            <span class="chip">Kali Linux</span>
-                        </div>
-                    </div>
-                    <div class="skill-card">
-                        <h3><i class="fas fa-gear"></i> Developer Tools</h3>
-                        <div class="chips">
-                            <span class="chip">Git</span>
-                            <span class="chip">GitHub</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== PROJECTS SECTION ===== -->
-        <section id="projects">
-            <div class="container">
-                <h2>Featured Projects</h2>
-                <div class="card-container">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>Student Management System</h3>
-                                <i class="fas fa-database"></i>
-                            </div>
-                            <p>Console-based Java application for managing student records with a menu-driven interface. Performs full CRUD operations and applies OOP principles like encapsulation and modular class design for efficient in-memory record management.</p>
-                            <div class="tags">
-                                <span>Java</span>
-                                <span>OOP</span>
-                                <span>Collections Framework</span>
-                                <span>CRUD</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>Smart Onion Storage Setup</h3>
-                                <i class="fas fa-microchip"></i>
-                            </div>
-                            <p>IoT-based monitoring system that detects early spoilage gases and optimizes storage conditions to extend onion shelf life.</p>
-                            <div class="tags">
-                                <span>Arduino Uno</span>
-                                <span>ESP32-CAM</span>
-                                <span>MQ135</span>
-                                <span>DHT22</span>
-                                <span>IoT</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>Theatre Piracy Detection System</h3>
-                                <i class="fas fa-video"></i>
-                            </div>
-                            <p>Built an IR-based detection device to identify unauthorized recording activities in theatres, helping content creators protect their intellectual property.</p>
-                            <div class="tags">
-                                <span>IR Sensors</span>
-                                <span>Embedded Systems</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== EXPERIENCE & EDUCATION SECTION ===== -->
-        <section id="experience">
-            <div class="container">
-                <h2>My Journey</h2>
-                <div class="card-container">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>MERN Stack Intern</h3>
-                                <i class="fas fa-code"></i>
-                            </div>
-                            <p class="meta">Viveka Softek · 1 Month</p>
-                            <ul>
-                                <li>Developed full-stack web applications using MongoDB, Express.js, React, and Node.js.</li>
-                                <li>Built REST APIs using modern development practices.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>Cybersecurity Intern</h3>
-                                <i class="fas fa-shield-halved"></i>
-                            </div>
-                            <p class="meta">Prompt Infotech · 5 Days</p>
-                            <ul>
-                                <li>Performed Network Security, Enumeration, Scanning, and Vulnerability Assessment activities.</li>
-                                <li>Followed industry security assessment practices.</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>B.E. Computer Science (Cyber Security)</h3>
-                                <i class="fas fa-graduation-cap"></i>
-                            </div>
-                            <p class="meta">PSNA College of Engineering and Technology, Dindigul · 2023 – 2027</p>
-                            <ul>
-                                <li>CGPA: 8.1</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>Higher Secondary Education (HSC)</h3>
-                                <i class="fas fa-school"></i>
-                            </div>
-                            <p class="meta">SBOA Matriculation and Higher Secondary School, Madurai · 2022 – 2023</p>
-                            <ul>
-                                <li>Percentage: 75.5%</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ===== CERTIFICATIONS & ACHIEVEMENTS SECTION ===== -->
-        <section id="achievements">
-            <div class="container">
-                <h2>Certifications & Achievements</h2>
-                <div class="card-container">
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>Certifications</h3>
-                                <i class="fas fa-certificate"></i>
-                            </div>
-                            <ul>
-                                <li>Java Programming – LinkedIn Learning</li>
-                                <li>Zoho Creator – Hands-on Workshop Certification, Zoho</li>
-                                <li>Introduction to Cybersecurity – Cisco</li>
-                                <li>Cybersecurity Essentials – Cisco</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-content">
-                            <div class="card-header">
-                                <h3>Achievements</h3>
-                                <i class="fas fa-trophy"></i>
-                            </div>
-                            <ul>
-                                <li>Received <strong style="color: var(--primary);">Hall of Fame</strong> recognition on Bugcrowd for responsibly reporting security vulnerabilities.</li>
-                                <li>Secured <strong style="color: var(--primary);">2nd Place</strong> in the Capture The Flag (CTF) competition at PSNA College of Engineering and Technology.</li>
-                                <li>Completed a hands-on Zoho Creator workshop on low-code application development.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- ===== FOOTER ===== -->
-    <footer id="contact">
-        <div class="container">
-            <p><i class="fas fa-envelope"></i> <a href="mailto:dhineshwaran2311@gmail.com">dhineshwaran2311@gmail.com</a> &nbsp;·&nbsp; <i class="fas fa-phone"></i> <a href="tel:+918122380849">+91 8122380849</a></p>
-            <p>© 2025 Dhineshwaran R · Built with passion</p>
+          </div>
         </div>
-    </footer>
+      </div>
 
-    <script>
-        // --- Dynamic Particle Constellation Background ---
+      <!-- Exp 2 -->
+      <div class="term-box p-6 reveal">
+        <div class="flex flex-col md:flex-row gap-6">
+          <div class="md:w-1/4 border-b md:border-b-0 md:border-r border-[var(--border)] pb-4 md:pb-0 md:pr-4">
+            <div class="font-mono text-xs text-[var(--accent)] uppercase tracking-widest mb-2">[ 2024 ]</div>
+            <div class="font-mono text-xs text-[var(--muted)]">DURATION: 1_MONTH</div>
+          </div>
+          <div class="md:w-3/4">
+            <div class="flex items-center gap-3 mb-2">
+              <i class="fas fa-code text-[var(--accent)]"></i>
+              <h3 class="font-display text-xl font-bold text-white">MERN Stack Intern</h3>
+            </div>
+            <div class="text-[var(--muted)] font-mono text-sm mb-4">@ Vivekasoftek</div>
+            <p class="text-[var(--muted)] leading-relaxed mb-4 text-sm">
+              Completed a certified MERN Stack Development internship with hands-on experience in <span class="text-white">MongoDB, Express.js, React, and Node.js</span>. Built full-stack web applications and RESTful APIs using modern development practices.
+            </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="tag font-mono">MongoDB</span>
+              <span class="tag font-mono">Express.js</span>
+              <span class="tag font-mono">React.js</span>
+              <span class="tag font-mono">Node.js</span>
+              <span class="tag font-mono">REST_APIs</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        const canvas = document.getElementById('particles-canvas');
-        const ctx = canvas.getContext('2d');
+<!-- Projects: Directories -->
+<section id="projects" class="relative px-6 md:px-12 py-24 md:py-32 border-t border-[var(--border)]">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-[var(--accent)]">03 // DEPLOYED_SYSTEMS</span>
+      <div class="h-px flex-1 bg-[var(--border)]"></div>
+    </div>
 
-        let particlesArray = [];
-        const numberOfParticles = 110;
-        const connectionDistance = 110;
-        const mouseRadius = 150;
+    <h2 class="section-h font-display mb-16 reveal">
+      <span class="text-white">cd ~/</span><span class="text-[var(--accent)]">projects</span>/
+    </h2>
 
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+    <div class="grid md:grid-cols-2 gap-4">
+      <!-- Project 1 -->
+      <div class="term-box p-6 project-card group reveal" 
+           data-type="code"
+           data-code-id="project1-code"
+           data-caption="Student Management System - Java Source Code">
+        <div class="font-mono text-xs text-[var(--muted)] mb-4 flex items-center gap-2">
+          <i class="fas fa-file-code text-[var(--accent)]"></i>
+          <span>dir /StudentManagementSystem</span>
+          <span class="ml-auto text-[var(--accent)] group-hover:text-white transition">[CLICK_TO_OPEN]</span>
+        </div>
+        <h3 class="font-display text-xl font-bold mb-3 proj-title text-white">Student Management System</h3>
+        <p class="text-[var(--muted)] text-sm leading-relaxed mb-4">
+          A menu-driven console application to manage student records, applying core OOP concepts and modular class design. Implements CRUD operations and ID-based search, separating data, logic, and interaction across dedicated classes.
+        </p>
+        <div class="bg-black border border-[var(--border)] p-3 font-mono text-[10px] text-[var(--muted)] mb-4">
+          <div><span class="text-[var(--accent)]">class</span> Student {</div>
+          <div class="pl-2"><span class="text-[var(--accent)]">private</span> String name;</div>
+          <div class="pl-2"><span class="text-[var(--accent)]">public</span> void addStudent() {</div>
+          <div class="pl-4 text-white">// CRUD logic</div>
+          <div class="pl-2">}</div>
+          <div>}</div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="tag font-mono">Java</span>
+          <span class="tag font-mono">OOP</span>
+          <span class="tag font-mono">ArrayList</span>
+        </div>
+      </div>
 
-        const mouse = { x: null, y: null };
+      <!-- Project 2 -->
+      <div class="term-box p-6 project-card group reveal" 
+           data-type="image"
+           data-image="https://z-cdn-media.chatglm.cn/files/9fff65c9-2833-4845-a1dd-04665d13a3bb.jpeg?auth_key=1887153837-e2bff0f7c18445c6836ba5cb363bc6be-0-3b34e5f3e766b77424dffbec145b2b38" 
+           data-caption="Smart Onion Storage Setup - IoT Monitoring System">
+        <div class="font-mono text-xs text-[var(--muted)] mb-4 flex items-center gap-2">
+          <i class="fas fa-microchip text-[var(--accent)]"></i>
+          <span>dir /SmartOnionStorage</span>
+          <span class="ml-auto text-[var(--accent)] group-hover:text-white transition">[CLICK_TO_OPEN]</span>
+        </div>
+        <h3 class="font-display text-xl font-bold mb-3 proj-title text-white">Smart Onion Storage Setup</h3>
+        <p class="text-[var(--muted)] text-sm leading-relaxed mb-4">
+          An IoT-based monitoring system that detects early spoilage gases and optimizes storage conditions to extend onion shelf life. Integrates multiple sensors and a camera module for real-time monitoring.
+        </p>
+        <div class="bg-black border border-[var(--border)] p-3 font-mono text-[10px] text-[var(--muted)] mb-4">
+          <div><span class="text-[var(--accent)]">init</span> sensors:</div>
+          <div class="pl-2">- MQ135 [gas_sensor]</div>
+          <div class="pl-2">- DHT22 [temp_humidity]</div>
+          <div class="pl-2">- ESP32-CAM [vision]</div>
+          <div class="text-[var(--accent)] mt-1">>> monitoring_active</div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="tag font-mono">Arduino</span>
+          <span class="tag font-mono">ESP32-CAM</span>
+          <span class="tag font-mono">IoT</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-        window.addEventListener('mousemove', (event) => {
-            mouse.x = event.x;
-            mouse.y = event.y;
-        });
+<!-- Skills: Capabilities Matrix -->
+<section id="skills" class="relative px-6 md:px-12 py-24 md:py-32 border-t border-[var(--border)] bg-[#050505]">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-[var(--accent)]">04 // CAPABILITIES_MATRIX</span>
+      <div class="h-px flex-1 bg-[var(--border)]"></div>
+    </div>
 
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            init();
-        });
+    <h2 class="section-h font-display mb-16 reveal">
+      <span class="text-white">./</span><span class="text-[var(--accent)]">skills</span><span class="text-white">.sh</span>
+    </h2>
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 1;
-                this.speedX = Math.random() * 1 - 0.5;
-                this.speedY = Math.random() * 1 - 0.5;
-                // Alternate teal / sky-blue particles to match the theme
-                this.color = Math.random() > 0.5
-                    ? 'rgba(45, 212, 191, 0.8)'
-                    : 'rgba(56, 189, 248, 0.7)';
-            }
+    <div class="grid md:grid-cols-2 gap-4">
+      <!-- Langs & Web -->
+      <div class="term-box p-6 reveal">
+        <div class="font-mono text-xs text-[var(--muted)] uppercase mb-4 flex items-center gap-2">
+          <i class="fas fa-terminal text-[var(--accent)]"></i>
+          <span>// programming_&_web_stack</span>
+        </div>
+        
+        <div class="mb-6">
+          <div class="font-mono text-[10px] text-[var(--muted)] uppercase mb-3">Languages & Frameworks</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag font-mono">Java</span>
+            <span class="tag font-mono">MERN Stack</span>
+            <span class="tag font-mono">SQL</span>
+            <span class="tag font-mono">REST APIs</span>
+          </div>
+        </div>
 
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+        <div class="pt-4 border-t border-[var(--border)]">
+          <div class="font-mono text-[10px] text-[var(--muted)] uppercase mb-3">Core Concepts</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag font-mono">OOP</span>
+            <span class="tag font-mono">DSA</span>
+            <span class="tag font-mono">DB Design</span>
+          </div>
+        </div>
+      </div>
 
-                if (mouse.x != null && mouse.y != null) {
-                    let dx = mouse.x - this.x;
-                    let dy = mouse.y - this.y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-                    if (distance < mouseRadius && distance > 0) {
-                        const forceDirectionX = dx / distance;
-                        const forceDirectionY = dy / distance;
-                        const force = (mouseRadius - distance) / mouseRadius;
-                        this.x -= forceDirectionX * force * 2;
-                        this.y -= forceDirectionY * force * 2;
-                    }
-                }
+      <!-- Security & Tools -->
+      <div class="term-box p-6 reveal">
+        <div class="font-mono text-xs text-[var(--muted)] uppercase mb-4 flex items-center gap-2">
+          <i class="fas fa-shield-halved text-[var(--accent)]"></i>
+          <span>// cybersecurity_&_forensics</span>
+        </div>
+        
+        <div class="mb-6">
+          <div class="font-mono text-[10px] text-[var(--muted)] uppercase mb-3">Tools & Frameworks</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag font-mono">Splunk</span>
+            <span class="tag font-mono">FTK Imager</span>
+            <span class="tag font-mono">Autopsy</span>
+            <span class="tag font-mono">Burp Suite</span>
+            <span class="tag font-mono">Metasploit</span>
+            <span class="tag font-mono">Nessus</span>
+            <span class="tag font-mono">Wireshark</span>
+            <span class="tag font-mono">Kali Linux</span>
+          </div>
+        </div>
 
-                if (this.x > canvas.width) this.x = 0;
-                else if (this.x < 0) this.x = canvas.width;
-                if (this.y > canvas.height) this.y = 0;
-                else if (this.y < 0) this.y = canvas.height;
-            }
+        <div class="pt-4 border-t border-[var(--border)]">
+          <div class="font-mono text-[10px] text-[var(--muted)] uppercase mb-3">Specializations</div>
+          <div class="flex flex-wrap gap-2">
+            <span class="tag font-mono">Digital Forensics</span>
+            <span class="tag font-mono">Incident Response</span>
+            <span class="tag font-mono">Penetration Testing</span>
+            <span class="tag font-mono">Vuln Assessment</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.closePath();
-                ctx.fill();
-            }
+<!-- Achievements & Certifications: Verified Credentials -->
+<section class="relative px-6 md:px-12 py-24 md:py-32 border-t border-[var(--border)]">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-[var(--accent)]">05 // VERIFIED_CREDENTIALS</span>
+      <div class="h-px flex-1 bg-[var(--border)]"></div>
+    </div>
+
+    <h2 class="section-h font-display mb-16 reveal">
+      <span class="text-white">decrypt</span> <span class="text-[var(--accent)]">achievements</span>.cert
+    </h2>
+
+    <div class="grid md:grid-cols-3 gap-4 mb-16">
+      <div class="term-box p-6 reveal">
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-trophy text-[var(--accent)] text-xl"></i>
+          <span class="font-mono text-xs text-[var(--accent)]">[UNLOCKED]</span>
+        </div>
+        <h3 class="font-display text-lg font-bold mb-2 text-white">Capture The Flag</h3>
+        <p class="text-sm text-[var(--muted)]">2nd Place @ PSNACET</p>
+      </div>
+
+      <div class="term-box p-6 achievement-has-image reveal" 
+           data-type="image"
+           data-image="https://z-cdn-media.chatglm.cn/files/36213cf0-171e-4b8c-9658-f0f1b5139309.jpeg?auth_key=1887154156-e050c72a8f1e41b2951f5a748b0ee0a0-0-c482acd724783d49a0555113a80d0643" 
+           data-caption="Bugcrowd Hall of Fame — Dhineshwaran listed among recognized security researchers">
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-bug text-[var(--accent)] text-xl"></i>
+          <span class="font-mono text-xs text-[var(--accent)]">[VERIFIED]</span>
+        </div>
+        <h3 class="font-display text-lg font-bold mb-2 text-white">Bugcrowd HOF</h3>
+        <p class="text-sm text-[var(--muted)]">Responsible disclosure</p>
+      </div>
+
+      <div class="term-box p-6 reveal">
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-laptop-code text-[var(--accent)] text-xl"></i>
+          <span class="font-mono text-xs text-[var(--accent)]">[COMPLETED]</span>
+        </div>
+        <h3 class="font-display text-lg font-bold mb-2 text-white">Zoho Creator</h3>
+        <p class="text-sm text-[var(--muted)]">Low-code App Dev Workshop</p>
+      </div>
+    </div>
+
+    <!-- Certs List -->
+    <div class="reveal">
+      <div class="flex items-center gap-4 mb-8">
+        <span class="font-mono text-xs text-[var(--muted)]">// certificates.log</span>
+        <div class="h-px flex-1 bg-[var(--border)]"></div>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="term-box p-4 flex items-center gap-3">
+          <i class="fab fa-java text-xl text-[var(--accent)]"></i>
+          <div class="flex-1">
+            <div class="font-semibold text-sm text-white">Java Programming</div>
+            <div class="font-mono text-[10px] text-[var(--muted)]">LinkedIn Learning</div>
+          </div>
+        </div>
+
+        <div class="term-box p-4 flex items-center gap-3">
+          <i class="fas fa-tools text-xl text-[var(--accent)]"></i>
+          <div class="flex-1">
+            <div class="font-semibold text-sm text-white">Zoho Creator</div>
+            <div class="font-mono text-[10px] text-[var(--muted)]">Zoho</div>
+          </div>
+        </div>
+
+        <div class="term-box p-4 flex items-center gap-3">
+          <i class="fas fa-network-wired text-xl text-[var(--accent)]"></i>
+          <div class="flex-1">
+            <div class="font-semibold text-sm text-white">Intro to Cyber Sec</div>
+            <div class="font-mono text-[10px] text-[var(--muted)]">Cisco</div>
+          </div>
+        </div>
+
+        <div class="term-box p-4 flex items-center gap-3">
+          <i class="fas fa-lock text-xl text-[var(--accent)]"></i>
+          <div class="flex-1">
+            <div class="font-semibold text-sm text-white">Cyber Essentials</div>
+            <div class="font-mono text-[10px] text-[var(--muted)]">Cisco</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Education: Root Directories -->
+<section class="relative px-6 md:px-12 py-24 md:py-32 border-t border-[var(--border)] bg-[#050505]">
+  <div class="max-w-[1400px] mx-auto">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-[var(--accent)]">06 // ROOT_DIRECTORIES</span>
+      <div class="h-px flex-1 bg-[var(--border)]"></div>
+    </div>
+
+    <h2 class="section-h font-display mb-16 reveal">
+      <span class="text-white">cat</span> <span class="text-[var(--accent)]">education</span>.dat
+    </h2>
+
+    <div class="space-y-4">
+      <div class="term-box p-6 reveal">
+        <div class="grid md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-7">
+            <div class="font-mono text-xs text-[var(--accent)] mb-2">[ 2023 — 2027 ]</div>
+            <h3 class="font-display text-xl font-bold mb-1 text-white">B.E. Computer Science and Engineering</h3>
+            <div class="text-[var(--muted)] text-sm">Cyber Security Specialization · PSNA College of Engineering and Technology, Dindigul</div>
+          </div>
+          <div class="md:col-span-5 md:text-right">
+            <div class="font-mono text-xs text-[var(--muted)] uppercase mb-1">CGPA</div>
+            <div class="font-display text-3xl font-bold text-[var(--accent)]">8.1</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="term-box p-6 reveal">
+        <div class="grid md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-7">
+            <div class="font-mono text-xs text-[var(--muted)] mb-2">[ 2022 — 2023 ]</div>
+            <h3 class="font-display text-xl font-bold mb-1 text-white">Higher Secondary Certificate</h3>
+            <div class="text-[var(--muted)] text-sm">SBOA Matriculation and Higher Secondary School, Madurai</div>
+          </div>
+          <div class="md:col-span-5 md:text-right">
+            <div class="font-mono text-xs text-[var(--muted)] uppercase mb-1">Percentage</div>
+            <div class="font-display text-3xl font-bold text-white">75.5<span class="text-lg">%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contact: Establish Connection -->
+<section id="contact" class="relative px-6 md:px-12 py-24 md:py-32 border-t border-[var(--border)] overflow-hidden">
+  <div class="max-w-[1400px] mx-auto relative z-10">
+    <div class="flex items-center gap-4 mb-12 reveal">
+      <span class="font-mono text-xs text-[var(--accent)]">07 // ESTABLISH_CONNECTION</span>
+      <div class="h-px flex-1 bg-[var(--border)]"></div>
+    </div>
+
+    <div class="text-center reveal">
+      <p class="font-mono text-sm text-[var(--accent)] uppercase tracking-widest mb-6">$ ping --request="collaboration"</p>
+      <h2 class="font-display font-bold mb-8 text-white" style="font-size: clamp(3rem, 9vw, 9rem); line-height: 0.95;">
+        ESTABLISH<br>
+        <span class="text-[var(--accent)]">CONNECTION_</span>
+      </h2>
+      <a href="mailto:dhineshwaran2311@gmail.com" class="inline-flex items-center gap-3 px-8 py-4 bg-[var(--accent)] text-black text-xs font-mono uppercase tracking-widest mb-12 hover:bg-white transition">
+        <i class="fas fa-paper-plane"></i> ./send_message.sh
+      </a>
+    </div>
+
+    <div class="grid md:grid-cols-4 gap-4 mt-12 reveal">
+      <a href="mailto:dhineshwaran2311@gmail.com" class="term-box p-5 group">
+        <i class="fas fa-envelope text-xl text-[var(--accent)] mb-4 block"></i>
+        <div class="font-mono text-[10px] text-[var(--muted)] uppercase mb-1">[MAIL]</div>
+        <div class="text-xs font-semibold break-all group-hover:text-[var(--accent)] transition text-white">dhineshwaran2311@gmail.com</div>
+      </a>
+      <a href="tel:+918122380849" class="term-box p-5 group">
+        <i class="fas fa-phone text-xl text-[var(--accent)] mb-4 block"></i>
+        <div class="font-mono text-[10px] text-[var(--muted)] uppercase mb-1">[TEL]</div>
+        <div class="text-xs font-semibold group-hover:text-[var(--accent)] transition text-white">+91 8122380849</div>
+      </a>
+      <a href="https://github.com/dhineshwaran-23" target="_blank" class="term-box p-5 group">
+        <i class="fab fa-github text-xl text-[var(--accent)] mb-4 block"></i>
+        <div class="font-mono text-[10px] text-[var(--muted)] uppercase mb-1">[GIT]</div>
+        <div class="text-xs font-semibold group-hover:text-[var(--accent)] transition text-white">dhineshwaran-23</div>
+      </a>
+      <a href="https://www.linkedin.com/in/dhineshwaran-r-7620962ba" target="_blank" class="term-box p-5 group">
+        <i class="fab fa-linkedin text-xl text-[var(--accent)] mb-4 block"></i>
+        <div class="font-mono text-[10px] text-[var(--muted)] uppercase mb-1">[NET]</div>
+        <div class="text-xs font-semibold group-hover:text-[var(--accent)] transition text-white">in/dhineshwaran-r</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="border-t border-[var(--border)] px-6 md:px-12 py-8">
+  <div class="max-w-[1400px] mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+    <div class="flex items-center gap-3">
+      <span class="font-mono text-[10px] text-[var(--muted)]">© 2025 Dhineshwaran R. // System built with intention.</span>
+    </div>
+    <div class="flex items-center gap-6 font-mono text-[10px] text-[var(--muted)]">
+      <a href="#home" class="hover:text-[var(--accent)] transition">cd .. ↑</a>
+      <span class="flex items-center gap-2">
+        <span class="w-2 h-2 bg-[var(--accent)] rounded-full animate-pulse"></span>
+        Connection: STABLE
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const dot = document.getElementById('cursorDot');
+  const ring = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.left = mouseX + 'px';
+    dot.style.top = mouseY + 'px';
+  });
+
+  function animateRing(){
+    ringX += (mouseX - ringX) * 0.15;
+    ringY += (mouseY - ringY) * 0.15;
+    ring.style.left = ringX + 'px';
+    ring.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .term-box, .tag, .achievement-has-image, .project-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      ring.style.width = '40px';
+      ring.style.height = '40px';
+      ring.style.borderColor = 'rgba(255,0,0,0.8)';
+    });
+    el.addEventListener('mouseleave', () => {
+      ring.style.width = '30px';
+      ring.style.height = '30px';
+      ring.style.borderColor = 'rgba(255,0,0,0.5)';
+    });
+  });
+
+  // Reveal on scroll
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+      }
+    });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('open');
+    menuBtn.innerHTML = mobileMenu.classList.contains('open') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+  });
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      menuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+    });
+  });
+
+  // Reading Progress Bar
+  window.addEventListener('scroll', () => {
+    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrollTop = window.scrollY;
+    const progress = (scrollTop / scrollHeight) * 100;
+    document.getElementById('progress-bar').style.width = progress + '%';
+  });
+
+  // ============ LIGHTBOX FUNCTIONALITY ============
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCodeWrapper = document.getElementById('lightboxCodeWrapper');
+  const lightboxCode = document.getElementById('lightboxCode');
+  const lightboxCaption = document.getElementById('lightboxCaption');
+  const lightboxClose = document.getElementById('lightboxClose');
+
+  function escapeHtml(text) {
+    const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return text.replace(/[&<>"']/g, m => map[m]);
+  }
+
+  function syntaxHighlight(code) {
+    let escaped = escapeHtml(code);
+    return escaped
+      .replace(/(\/\/[^\n]*)/g, '<span class="syn-com">$1</span>')
+      .replace(/\b(public|private|class|void|static|new|return|if|else|for|while|switch|case|break|import|this|int|String|boolean)\b/g, '<span class="syn-kw">$1</span>')
+      .replace(/\b(Student|StudentManager|Main|ArrayList|Scanner|System|Integer|String)\b/g, '<span class="syn-type">$1</span>')
+      .replace(/\b(getId|getName|getCourse|setName|setCourse|addStudent|viewStudents|searchStudent|updateStudent|deleteStudent|println|print|nextInt|nextLine)\b/g, '<span class="syn-fn">$1</span>');
+  }
+
+  function openLightbox(content, captionText, type = 'image') {
+    if (type === 'code') {
+      lightboxImg.style.display = 'none';
+      lightboxCodeWrapper.style.display = 'block';
+      lightboxCode.innerHTML = syntaxHighlight(content);
+    } else {
+      lightboxCodeWrapper.style.display = 'none';
+      lightboxImg.style.display = 'block';
+      lightboxImg.src = content;
+    }
+    lightboxCaption.textContent = captionText || '';
+    lightbox.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('active');
+    document.body.style.overflow = '';
+    setTimeout(() => {
+      lightboxImg.src = '';
+      lightboxCode.innerHTML = '';
+    }, 400);
+  }
+
+  document.querySelectorAll('[data-type]').forEach(card => {
+    card.addEventListener('click', () => {
+      const type = card.getAttribute('data-type');
+      const caption = card.getAttribute('data-caption');
+      if (type === 'code') {
+        const codeId = card.getAttribute('data-code-id');
+        if (codeId) {
+          const codeContent = document.getElementById(codeId).textContent;
+          openLightbox(codeContent, caption, 'code');
         }
+      } else if (type === 'image') {
+        const image = card.getAttribute('data-image');
+        if (image) openLightbox(image, caption, 'image');
+      }
+    });
+  });
 
-        function init() {
-            particlesArray = [];
-            for (let i = 0; i < numberOfParticles; i++) {
-                particlesArray.push(new Particle());
-            }
-        }
-
-        function connect() {
-            for (let a = 0; a < particlesArray.length; a++) {
-                for (let b = a; b < particlesArray.length; b++) {
-                    let dx = particlesArray[a].x - particlesArray[b].x;
-                    let dy = particlesArray[a].y - particlesArray[b].y;
-                    let distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < connectionDistance) {
-                        let opacity = 1 - (distance / connectionDistance);
-                        ctx.strokeStyle = `rgba(56, 189, 248, ${opacity * 0.4})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
-                        ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
-                        ctx.stroke();
-                    }
-                }
-            }
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            for (let i = 0; i < particlesArray.length; i++) {
-                particlesArray[i].update();
-                particlesArray[i].draw();
-            }
-            connect();
-            requestAnimationFrame(animate);
-        }
-
-        init();
-        animate();
-    </script>
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && lightbox.classList.contains('active')) closeLightbox();
+  });
+</script>
 </body>
 </html>
